@@ -165,11 +165,30 @@ function registrarEventos() {
   $('formCheckout').addEventListener('submit', confirmarCompra);
   $('btnImprimir').addEventListener('click', () => window.print());
   $('btnCerrarFactura').addEventListener('click', () => $('modalFactura').close());
+
+  // Accesos de usuario (módulo futuro)
+  ['btnIngresar', 'btnRegistrarse', 'btnCrearCuenta'].forEach((id) =>
+    $(id).addEventListener('click', avisarModuloUsuarios));
+}
+
+/* ---------- Portada ---------- */
+
+/** Muestra un saludo según la hora del día, seguido del eslogan de la tienda. */
+function pintarSaludo() {
+  const hora = new Date().getHours();
+  const saludo = hora < 12 ? 'Buenos días' : (hora < 19 ? 'Buenas tardes' : 'Buenas noches');
+  $('saludo').textContent = saludo + '. Tecnología, moda, hogar y más en un solo lugar.';
+}
+
+/** Registro e ingreso pertenecen al módulo de usuarios (HU_01 a HU_05): se desarrolla en la siguiente etapa. */
+function avisarModuloUsuarios() {
+  avisar('El registro e ingreso estarán disponibles en el módulo de usuarios.');
 }
 
 /* ---------- Arranque ---------- */
 document.addEventListener('DOMContentLoaded', () => {
   Carrito.cargar();
+  pintarSaludo();
   pintarFiltros();
   pintarProductos();
   pintarCarrito();
