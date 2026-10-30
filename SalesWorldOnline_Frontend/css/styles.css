@@ -1,0 +1,103 @@
+/* ==========================================================
+   Sales World Online - Hoja de estilos
+   Convenciones: nombres de clase en español, metodología BEM
+   (bloque__elemento--modificador), variables CSS para el tema.
+   ========================================================== */
+:root {
+  --color-primario: #1d4ed8;
+  --color-primario-osc: #1e3a8a;
+  --color-acento: #f59e0b;
+  --color-fondo: #f3f5fa;
+  --color-superficie: #ffffff;
+  --color-texto: #1f2937;
+  --color-suave: #6b7280;
+  --color-borde: #e5e7eb;
+  --color-error: #dc2626;
+  --radio: 12px;
+  --sombra: 0 2px 10px rgba(0, 0, 0, .08);
+}
+
+* { box-sizing: border-box; margin: 0; }
+body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--color-fondo); color: var(--color-texto); line-height: 1.5; }
+.contenedor { width: min(1100px, 92%); margin-inline: auto; }
+
+/* Encabezado */
+.encabezado { background: var(--color-primario); color: #fff; position: sticky; top: 0; z-index: 10; }
+.encabezado__interno { display: flex; align-items: center; gap: 1rem; padding: .8rem 0; flex-wrap: wrap; }
+.marca { color: #fff; text-decoration: none; font-weight: 800; font-size: 1.25rem; }
+.marca span { color: var(--color-acento); }
+.buscador { flex: 1; min-width: 180px; padding: .6rem 1rem; border: 0; border-radius: 999px; font-size: 1rem; }
+
+/* Botones */
+.btn { border: 0; border-radius: 8px; padding: .65rem 1rem; font-size: .95rem; font-weight: 600; cursor: pointer; transition: filter .15s; }
+.btn:hover:not(:disabled) { filter: brightness(1.08); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn--primario { background: var(--color-primario); color: #fff; }
+.btn--secundario { background: #e5e7eb; color: var(--color-texto); }
+.btn--carrito { background: var(--color-acento); color: #1f2937; }
+.btn-icono { background: none; border: 1px solid var(--color-borde); border-radius: 6px; width: 30px; height: 30px; cursor: pointer; }
+.contador { background: #fff; border-radius: 999px; padding: 0 .5rem; margin-left: .3rem; }
+:focus-visible { outline: 3px solid var(--color-acento); outline-offset: 2px; }
+
+/* Portada y filtros */
+.hero { text-align: center; padding: 2rem 0 1rem; }
+.hero h1 { font-size: clamp(1.5rem, 4vw, 2.2rem); color: var(--color-primario-osc); }
+.hero p { color: var(--color-suave); }
+.filtros { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center; margin: 1rem 0 1.5rem; }
+.chip { border: 1px solid var(--color-borde); background: #fff; border-radius: 999px; padding: .4rem 1rem; cursor: pointer; }
+.chip--activo { background: var(--color-primario); color: #fff; border-color: var(--color-primario); }
+
+/* Catálogo */
+.grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.2rem; padding-bottom: 3rem; }
+.tarjeta { background: var(--color-superficie); border-radius: var(--radio); box-shadow: var(--sombra); padding: 1.2rem; display: flex; flex-direction: column; gap: .3rem; }
+.tarjeta__icono { font-size: 3.5rem; text-align: center; background: var(--color-fondo); border-radius: var(--radio); padding: 1rem; }
+.tarjeta__categoria { font-size: .75rem; color: var(--color-suave); text-transform: uppercase; letter-spacing: .05em; }
+.tarjeta__desc { font-size: .85rem; color: var(--color-suave); }
+.tarjeta__precio { font-weight: 800; font-size: 1.2rem; color: var(--color-primario); }
+.tarjeta__stock { font-size: .8rem; color: var(--color-suave); margin-bottom: .5rem; }
+.tarjeta .btn { margin-top: auto; }
+.vacio { text-align: center; color: var(--color-suave); padding: 2rem 0; }
+
+/* Panel del carrito */
+.panel { position: fixed; top: 0; right: 0; height: 100%; width: min(400px, 100%); background: #fff; z-index: 30; display: flex; flex-direction: column; transform: translateX(100%); transition: transform .25s; box-shadow: -4px 0 20px rgba(0,0,0,.2); }
+.panel--abierto { transform: translateX(0); }
+.panel__cabecera { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--color-borde); }
+.lista-carrito { list-style: none; padding: 1rem; overflow-y: auto; flex: 1; }
+.item { display: grid; grid-template-columns: 40px 1fr auto auto; gap: .6rem; align-items: center; padding: .6rem 0; border-bottom: 1px solid var(--color-borde); }
+.item__icono { font-size: 1.8rem; }
+.item__info small { display: block; color: var(--color-suave); }
+.item__cantidad { display: flex; align-items: center; gap: .4rem; }
+.panel__pie { padding: 1rem; border-top: 1px solid var(--color-borde); display: grid; gap: .5rem; }
+.fondo { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 20; }
+
+/* Totales */
+.totales div { display: flex; justify-content: space-between; padding: .2rem 0; }
+.totales dd { margin: 0; }
+.totales__total { font-weight: 800; font-size: 1.1rem; border-top: 2px solid var(--color-borde); margin-top: .3rem; padding-top: .4rem !important; }
+
+/* Modales y formulario */
+.modal { border: 0; border-radius: var(--radio); padding: 1.5rem; width: min(520px, 92%); margin: auto; }
+.modal::backdrop { background: rgba(0,0,0,.5); }
+.modal h2 { margin-bottom: 1rem; color: var(--color-primario-osc); }
+.modal label { display: block; font-weight: 600; margin-top: .7rem; font-size: .9rem; }
+.modal input, .modal select { width: 100%; padding: .55rem .7rem; border: 1px solid var(--color-borde); border-radius: 8px; font-size: 1rem; }
+.error { color: var(--color-error); font-size: .8rem; min-height: 1em; display: block; }
+.modal__acciones { display: flex; justify-content: flex-end; gap: .6rem; margin-top: 1.2rem; }
+
+/* Factura */
+.modal--factura { width: min(640px, 94%); }
+.factura__meta { color: var(--color-suave); font-size: .85rem; margin: .5rem 0; }
+.tabla-factura { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+.tabla-factura th, .tabla-factura td { padding: .45rem; border-bottom: 1px solid var(--color-borde); text-align: left; }
+.tabla-factura .num, .tabla-factura th:nth-child(n+2) { text-align: right; }
+
+/* Notificación y pie */
+.toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #111827; color: #fff; padding: .7rem 1.2rem; border-radius: 999px; z-index: 50; }
+.pie { text-align: center; padding: 1.5rem; color: var(--color-suave); font-size: .85rem; }
+
+/* Impresión: solo se imprime la factura */
+@media print {
+  body > *:not(#modalFactura) { display: none !important; }
+  .no-imprimir { display: none !important; }
+  .modal--factura { box-shadow: none; width: 100%; }
+}
