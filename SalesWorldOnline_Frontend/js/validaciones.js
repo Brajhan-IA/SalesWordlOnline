@@ -45,3 +45,16 @@ function validarProducto(datos) {
   if (String(datos.stock).trim() === '' || !Number.isInteger(stock) || stock < 0) errores.stock = 'El stock debe ser un número entero (0 o más).';
   return errores;
 }
+
+/**
+ * Valida los datos de la cuenta de administrador (correo y contraseña).
+ * @param {Object} datos - correo, clave y, al crear la cuenta, confirmar.
+ * @param {boolean} crear - true si se está creando la cuenta.
+ * @returns {string} Primer mensaje de error, o '' si todo es válido.
+ */
+function validarCuentaAdmin(datos, crear) {
+  if (!REGLAS.correo.ok(datos.correo)) return 'Ingresa un correo válido.';
+  if (crear && (datos.clave || '').length < 8) return 'La contraseña debe tener mínimo 8 caracteres.';
+  if (crear && datos.clave !== datos.confirmar) return 'Las contraseñas no coinciden.';
+  return '';
+}

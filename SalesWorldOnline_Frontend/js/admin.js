@@ -1,19 +1,22 @@
 /**
  * admin.js
  * Módulo del administrador (HU_01 a HU_04):
- *   HU_01 ingresar como administrador con credenciales,
+ *   HU_01 ingresar como administrador con sus credenciales,
  *   HU_02 ver la lista de productos registrados,
  *   HU_03 modificar productos,
  *   HU_04 agregar nuevos productos y eliminar.
  *
- * IMPORTANTE (prototipo): las credenciales están en el código solo para poder
- * demostrar el módulo sin servidor. En el sistema real, el ingreso se valida en el
- * back-end PHP con contraseñas cifradas; el front-end nunca debe guardar claves.
+ * SEGURIDAD (prototipo sin servidor): el correo y la contraseña del administrador NO están
+ * escritos en el código. La primera vez, cada persona crea su cuenta; la contraseña se guarda
+ * cifrada (PBKDF2 + SHA-256 + sal) solo en el navegador de esa persona (localStorage) y nunca
+ * se envía a ningún servidor. Un sitio sin back-end no puede garantizar seguridad real: en el
+ * sistema final el ingreso se validará en el back-end PHP con la base de datos.
  */
 'use strict';
 
-const CREDENCIALES_DEMO = { usuario: 'admin@salesworld.com', clave: 'Admin2026' };
 const CLAVE_SESION = 'swo_admin';
+const CLAVE_CUENTA = 'swo_admin_cuenta';
+const ITERACIONES_HASH = 100000;
 const LADO_IMAGEN = 480; // píxeles del lado de la foto guardada (cuadrada)
 
 /** Estado del formulario de producto: id en edición (null = producto nuevo) y foto actual. */
@@ -34,22 +37,93 @@ function actualizarEncabezadoAdmin() {
   $('btnSalir').hidden = !activo;
 }
 
-/** Valida las credenciales y abre el panel (HU_01). */
-function iniciarSesion(evento) {
+/* ---------- Cuenta del administrador (cifrada, solo en este navegador) ---------- */
+
+/** @returns {Object|null} Cuenta guardada: { correo, sal, hash } o null si aún no existe. */
+function cuentaAdmin() {
+  try { return JSON.parse(localStorage.getItem(CLAVE_CUENTA)); } catch (e) { return null; }
+}
+
+/** Convierte bytes en texto hexadecimal. */
+function aHex(bytes) {
+  return [...new Uint8Array(bytes)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** Convierte texto hexadecimal en bytes. */
+function deHex(hex) {
+  return new Uint8Array(hex.match(/../g).map((h) => parseInt(h, 16)));
+}
+
+/**
+ * Calcula el hash PBKDF2-SHA256 de una contraseña.
+ * @param {string} clave
+ * @param {string} salHex - Sal aleatoria en hexadecimal.
+ * @returns {Promise<string>} Hash en hexadecimal.
+ */
+async function calcularHash(clave, salHex) {
+  const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(clave), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', hash: 'SHA-256', salt: deHex(salHex), iterations: ITERACIONES_HASH }, material, 256);
+  return aHex(bits);
+}
+
+/** Prepara la ventana de ingreso: "crear cuenta" la primera vez, "ingresar" después. */
+function abrirLogin() {
+  const existe = Boolean(cuentaAdmin());
+  $('tituloLogin').textContent = existe ? 'Ingreso de administrador' : 'Crear cuenta de administrador';
+  $('btnEnviarLogin').textContent = existe ? 'Ingresar' : 'Crear cuenta';
+  $('filaConfirmar').hidden = existe;
+  $('btnRestablecer').hidden = !existe;
+  $('loginClave').autocomplete = existe ? 'current-password' : 'new-password';
+  $('notaLogin').textContent = existe
+    ? 'Ingresa con el correo y la contraseña que creaste en este navegador.'
+    : 'Primera vez: crea tu correo y tu contraseña (mínimo 8 caracteres). Se guardan cifrados solo en este navegador y no se envían a ningún servidor.';
+  $('loginError').textContent = '';
+  $('formLogin').reset();
+  if (!$('modalLogin').open) $('modalLogin').showModal();
+}
+
+/** Crea la cuenta (primera vez) o valida las credenciales, y abre el panel (HU_01). */
+async function iniciarSesion(evento) {
   evento.preventDefault();
-  const usuario = $('loginUsuario').value.trim().toLowerCase();
-  const clave = $('loginClave').value;
-  if (usuario !== CREDENCIALES_DEMO.usuario || clave !== CREDENCIALES_DEMO.clave) {
+  if (!window.crypto || !crypto.subtle) {
+    $('loginError').textContent = 'Este navegador no permite el cifrado necesario. Usa Chrome o Edge.';
+    return;
+  }
+  const datos = {
+    correo: $('loginUsuario').value.trim().toLowerCase(),
+    clave: $('loginClave').value,
+    confirmar: $('loginConfirmar').value
+  };
+  const cuenta = cuentaAdmin();
+  const error = validarCuentaAdmin(datos, !cuenta);
+  if (error) { $('loginError').textContent = error; return; }
+
+  if (!cuenta) {
+    const sal = aHex(crypto.getRandomValues(new Uint8Array(16)));
+    const nueva = { correo: datos.correo, sal, hash: await calcularHash(datos.clave, sal) };
+    try { localStorage.setItem(CLAVE_CUENTA, JSON.stringify(nueva)); }
+    catch (e) { $('loginError').textContent = 'No se pudo guardar la cuenta en este navegador.'; return; }
+  } else if (datos.correo !== cuenta.correo || await calcularHash(datos.clave, cuenta.sal) !== cuenta.hash) {
     $('loginError').textContent = 'Usuario o contraseña incorrectos.';
     return;
   }
+
   try { sessionStorage.setItem(CLAVE_SESION, '1'); } catch (e) { /* ignorar */ }
   $('formLogin').reset();
   $('loginError').textContent = '';
   $('modalLogin').close();
   actualizarEncabezadoAdmin();
   abrirPanelAdmin();
-  avisar('Sesión de administrador iniciada');
+  avisar(cuenta ? 'Sesión de administrador iniciada' : 'Cuenta de administrador creada');
+}
+
+/** Borra la cuenta guardada en este navegador para crear una nueva (por ejemplo, si olvidó la contraseña). */
+function restablecerCuenta() {
+  if (!window.confirm('Se borrará la cuenta de administrador de este navegador y podrás crear otra. ¿Continuar?')) return;
+  try { localStorage.removeItem(CLAVE_CUENTA); sessionStorage.removeItem(CLAVE_SESION); } catch (e) { /* ignorar */ }
+  actualizarEncabezadoAdmin();
+  abrirLogin();
 }
 
 /** Cierra la sesión del administrador. */
@@ -64,7 +138,7 @@ function cerrarSesion() {
 
 /** Abre el panel solo si hay sesión de administrador. */
 function abrirPanelAdmin() {
-  if (!esAdmin()) { $('modalLogin').showModal(); return; }
+  if (!esAdmin()) { abrirLogin(); return; }
   pintarTablaAdmin();
   if (!$('modalAdmin').open) $('modalAdmin').showModal();
 }
@@ -224,7 +298,8 @@ function registrarEventosAdmin() {
   $('selectCategoria').innerHTML = '<option value="">Selecciona...</option>' +
     CATEGORIAS.filter((c) => c !== 'Todos').map((c) => `<option>${c}</option>`).join('');
 
-  $('btnIngresar').addEventListener('click', () => $('modalLogin').showModal());
+  $('btnIngresar').addEventListener('click', abrirLogin);
+  $('btnRestablecer').addEventListener('click', restablecerCuenta);
   $('btnCancelarLogin').addEventListener('click', () => $('modalLogin').close());
   $('formLogin').addEventListener('submit', iniciarSesion);
   $('btnPanelAdmin').addEventListener('click', abrirPanelAdmin);

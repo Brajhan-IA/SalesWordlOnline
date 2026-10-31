@@ -7,7 +7,8 @@ Interfaz web para la tienda en línea Sales World Online: catálogo con búsqued
 carrito de compras, formulario de checkout con validaciones y generación de factura imprimible.
 
 ## Módulo del administrador
-Botón **Ingresar** → correo `admin@salesworld.com` y contraseña `Admin2026` (solo demostración).
+Botón **Ingresar**: la primera vez se crea la cuenta de administrador (correo y contraseña de mínimo 8 caracteres).
+La contraseña se guarda **cifrada solo en el navegador** de cada persona; no está escrita en el código ni se envía a ningún servidor.
 Desde el panel se pueden **agregar, editar y eliminar productos** con su fotografía. Los cambios se guardan en el navegador.
 
 ## Historias de usuario cubiertas

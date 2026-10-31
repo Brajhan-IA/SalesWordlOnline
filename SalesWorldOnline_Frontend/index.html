@@ -129,19 +129,24 @@
     </div>
   </dialog>
 
-  <!-- Modal de ingreso del administrador (HU_01) -->
+  <!-- Modal de ingreso del administrador (HU_01): crea la cuenta la primera vez -->
   <dialog id="modalLogin" class="modal">
     <form id="formLogin" novalidate>
-      <h2>Ingreso de administrador</h2>
+      <h2 id="tituloLogin">Ingreso de administrador</h2>
       <label for="loginUsuario">Correo</label>
       <input id="loginUsuario" type="email" autocomplete="username" required>
       <label for="loginClave">Contraseña</label>
       <input id="loginClave" type="password" autocomplete="current-password" required>
+      <div id="filaConfirmar" hidden>
+        <label for="loginConfirmar">Confirmar contraseña</label>
+        <input id="loginConfirmar" type="password" autocomplete="new-password">
+      </div>
       <small id="loginError" class="error"></small>
-      <p class="nota">Prototipo de demostración: usa <strong>admin@salesworld.com</strong> y la contraseña <strong>Admin2026</strong>.</p>
+      <p id="notaLogin" class="nota"></p>
       <div class="modal__acciones">
+        <button type="button" id="btnRestablecer" class="btn btn--peligro btn--chico" hidden>Restablecer cuenta</button>
         <button type="button" id="btnCancelarLogin" class="btn btn--secundario">Cancelar</button>
-        <button type="submit" class="btn btn--primario">Ingresar</button>
+        <button type="submit" id="btnEnviarLogin" class="btn btn--primario">Ingresar</button>
       </div>
     </form>
   </dialog>
