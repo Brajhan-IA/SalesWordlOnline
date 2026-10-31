@@ -25,6 +25,8 @@
         <button id="btnCarrito" class="btn btn--carrito" aria-label="Abrir carrito">
           🛒 Carrito <span id="contadorCarrito" class="contador">0</span>
         </button>
+        <button id="btnPanelAdmin" class="btn btn--contorno" hidden>⚙️ Panel admin</button>
+        <button id="btnSalir" class="btn btn--contorno" hidden>Salir</button>
         <button id="btnIngresar" class="btn btn--contorno">Ingresar</button>
         <button id="btnRegistrarse" class="btn btn--degradado">Registrarse</button>
       </div>
@@ -127,6 +129,84 @@
     </div>
   </dialog>
 
+  <!-- Modal de ingreso del administrador (HU_01) -->
+  <dialog id="modalLogin" class="modal">
+    <form id="formLogin" novalidate>
+      <h2>Ingreso de administrador</h2>
+      <label for="loginUsuario">Correo</label>
+      <input id="loginUsuario" type="email" autocomplete="username" required>
+      <label for="loginClave">Contraseña</label>
+      <input id="loginClave" type="password" autocomplete="current-password" required>
+      <small id="loginError" class="error"></small>
+      <p class="nota">Prototipo de demostración: usa <strong>admin@salesworld.com</strong> y la contraseña <strong>Admin2026</strong>.</p>
+      <div class="modal__acciones">
+        <button type="button" id="btnCancelarLogin" class="btn btn--secundario">Cancelar</button>
+        <button type="submit" class="btn btn--primario">Ingresar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Panel del administrador: lista de productos (HU_02) -->
+  <dialog id="modalAdmin" class="modal modal--admin">
+    <div class="admin__cabecera">
+      <h2>Administrar productos <span class="admin__total"><span id="totalProductos">0</span> registrados</span></h2>
+      <div class="admin__botones">
+        <button id="btnNuevoProducto" class="btn btn--primario">+ Agregar producto</button>
+        <button id="btnRestaurar" class="btn btn--secundario">Restaurar catálogo</button>
+        <button id="btnCerrarAdmin" class="btn btn--secundario">Cerrar</button>
+        <button id="btnSalirPanel" class="btn btn--contorno">Cerrar sesión</button>
+      </div>
+    </div>
+    <div class="tabla-envoltura">
+      <table class="tabla-admin">
+        <thead><tr><th>Foto</th><th>Producto</th><th>Categoría</th><th class="num">Precio</th><th class="num">Stock</th><th>Acciones</th></tr></thead>
+        <tbody id="filasAdmin"></tbody>
+      </table>
+    </div>
+  </dialog>
+
+  <!-- Modal para agregar o editar un producto (HU_03 y HU_04) -->
+  <dialog id="modalProducto" class="modal">
+    <form id="formProducto" novalidate>
+      <h2 id="tituloProducto">Agregar producto</h2>
+
+      <label for="prodNombre">Nombre del producto</label>
+      <input id="prodNombre" name="nombre" type="text" required>
+      <small class="error" data-error-prod="nombre"></small>
+
+      <label for="selectCategoria">Categoría</label>
+      <select id="selectCategoria" name="categoria" required></select>
+      <small class="error" data-error-prod="categoria"></small>
+
+      <label for="prodDescripcion">Descripción</label>
+      <input id="prodDescripcion" name="descripcion" type="text" required>
+      <small class="error" data-error-prod="descripcion"></small>
+
+      <div class="fila-doble">
+        <div>
+          <label for="prodPrecio">Precio (COP)</label>
+          <input id="prodPrecio" name="precio" type="number" min="1" step="1" inputmode="numeric" required>
+          <small class="error" data-error-prod="precio"></small>
+        </div>
+        <div>
+          <label for="prodStock">Stock (unidades)</label>
+          <input id="prodStock" name="stock" type="number" min="0" step="1" inputmode="numeric" required>
+          <small class="error" data-error-prod="stock"></small>
+        </div>
+      </div>
+
+      <label for="inputImagen">Foto del producto</label>
+      <input id="inputImagen" name="imagen" type="file" accept="image/*">
+      <small class="error" data-error-prod="imagen"></small>
+      <div id="vistaPrevia" class="vista-previa"></div>
+
+      <div class="modal__acciones">
+        <button type="button" id="btnCancelarProducto" class="btn btn--secundario">Cancelar</button>
+        <button type="submit" id="btnGuardarProducto" class="btn btn--primario">Agregar producto</button>
+      </div>
+    </form>
+  </dialog>
+
   <!-- Notificación temporal -->
   <div id="toast" class="toast" role="status" hidden></div>
 
@@ -138,5 +218,6 @@
   <script src="js/carrito.js"></script>
   <script src="js/factura.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/admin.js"></script>
 </body>
 </html>

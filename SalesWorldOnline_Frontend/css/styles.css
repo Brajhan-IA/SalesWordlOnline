@@ -19,6 +19,7 @@
 }
 
 * { box-sizing: border-box; margin: 0; }
+[hidden] { display: none !important; } /* el atributo hidden debe ganar a cualquier display */
 html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 body {
   font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
@@ -99,7 +100,12 @@ body {
   padding: 1.2rem; display: flex; flex-direction: column; gap: .3rem; transition: border-color .2s;
 }
 .tarjeta:hover { border-color: #1f7fa6; }
-.tarjeta__icono { font-size: 3.4rem; text-align: center; background: var(--superficie-2); border-radius: 10px; padding: 1rem; margin-bottom: .4rem; }
+.tarjeta__foto {
+  aspect-ratio: 1 / 1; border-radius: 10px; overflow: hidden; margin-bottom: .5rem;
+  background: var(--superficie-2); display: flex; align-items: center; justify-content: center;
+}
+.tarjeta__imagen { width: 100%; height: 100%; object-fit: cover; display: block; font-size: 4rem; text-align: center; line-height: 1; transition: transform .3s; }
+.tarjeta:hover .tarjeta__imagen { transform: scale(1.04); }
 .tarjeta__categoria { font-size: .72rem; color: var(--cian); text-transform: uppercase; letter-spacing: .14em; }
 .tarjeta h3 { font-size: 1.1rem; }
 .tarjeta__desc { font-size: .85rem; color: var(--texto-suave); }
@@ -117,8 +123,9 @@ body {
 .panel--abierto { transform: translateX(0); }
 .panel__cabecera { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.2rem; border-bottom: 1px solid var(--borde); }
 .lista-carrito { list-style: none; padding: 1rem 1.2rem; overflow-y: auto; flex: 1; }
-.item { display: grid; grid-template-columns: 40px 1fr auto auto; gap: .6rem; align-items: center; padding: .7rem 0; border-bottom: 1px solid var(--borde); }
-.item__icono { font-size: 1.8rem; }
+.item { display: grid; grid-template-columns: 44px 1fr auto auto; gap: .6rem; align-items: center; padding: .7rem 0; border-bottom: 1px solid var(--borde); }
+.item__foto { width: 44px; height: 44px; border-radius: 8px; overflow: hidden; background: var(--superficie-2); display: flex; align-items: center; justify-content: center; }
+.item__imagen { width: 100%; height: 100%; object-fit: cover; display: block; font-size: 1.6rem; text-align: center; }
 .item__info small { display: block; color: var(--texto-suave); }
 .item__cantidad { display: flex; align-items: center; gap: .4rem; }
 .panel__pie { padding: 1rem 1.2rem; border-top: 1px solid var(--borde); display: grid; gap: .6rem; }
@@ -151,6 +158,31 @@ body {
 .tabla-factura th, .tabla-factura td { padding: .5rem; border-bottom: 1px solid var(--borde); text-align: left; }
 .tabla-factura .num, .tabla-factura th:nth-child(n+2) { text-align: right; }
 
+/* ---------- Módulo del administrador ---------- */
+.btn--chico { padding: .35rem .8rem; font-size: .8rem; }
+.btn--peligro { background: transparent; color: var(--error); border: 1.5px solid #5a2433; }
+.btn--peligro:hover:not(:disabled) { background: #3a1624; }
+.nota { margin-top: .9rem; font-size: .8rem; color: var(--texto-suave); }
+.nota strong { color: var(--cian); }
+.modal--admin { width: min(920px, 96%); max-height: 92vh; overflow: auto; }
+.admin__cabecera { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.admin__cabecera h2 { margin: 0; }
+.admin__total { font-size: .8rem; font-weight: 500; color: var(--texto-suave); margin-left: .5rem; }
+.admin__botones { display: flex; gap: .5rem; flex-wrap: wrap; }
+.tabla-envoltura { overflow-x: auto; }
+.tabla-admin { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.tabla-admin th, .tabla-admin td { padding: .6rem .5rem; border-bottom: 1px solid var(--borde); text-align: left; vertical-align: middle; }
+.tabla-admin th { color: var(--texto-suave); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+.tabla-admin .num, .tabla-admin th.num { text-align: right; }
+.tabla-admin small { display: block; color: var(--texto-suave); }
+.acciones-fila { white-space: nowrap; display: flex; gap: .4rem; border-bottom: 0 !important; }
+.miniatura { width: 48px; height: 48px; border-radius: 8px; overflow: hidden; background: var(--superficie-2); display: flex; align-items: center; justify-content: center; }
+.miniatura__img { width: 100%; height: 100%; object-fit: cover; display: block; font-size: 1.5rem; text-align: center; }
+.fila-doble { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.vista-previa { margin-top: .6rem; width: 120px; height: 120px; border-radius: 10px; overflow: hidden; background: var(--superficie-2); border: 1px dashed var(--borde); display: flex; align-items: center; justify-content: center; text-align: center; color: var(--texto-suave); font-size: .75rem; padding: .3rem; }
+.vista-previa img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.modal input[type="file"] { padding: .45rem; }
+
 /* ---------- Notificación y pie ---------- */
 .toast {
   position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 50; max-width: 90%;
@@ -167,7 +199,7 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .btn, .panel, .tarjeta { transition: none; }
+  .btn, .panel, .tarjeta, .tarjeta__imagen { transition: none; }
 }
 
 /* ---------- Impresión: solo se imprime la factura, en blanco y negro ---------- */

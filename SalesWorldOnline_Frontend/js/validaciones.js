@@ -28,3 +28,20 @@ function validarFormulario(datos) {
   });
   return errores;
 }
+
+/**
+ * Valida el formulario de producto del administrador (HU_03 y HU_04).
+ * @param {Object} datos - nombre, categoria, descripcion, precio y stock.
+ * @returns {Object} Mapa campo -> mensaje de error (vacío si todo es válido).
+ */
+function validarProducto(datos) {
+  const errores = {};
+  const precio = Number(datos.precio);
+  const stock = Number(datos.stock);
+  if ((datos.nombre || '').trim().length < 3) errores.nombre = 'El nombre debe tener mínimo 3 letras.';
+  if (!datos.categoria) errores.categoria = 'Selecciona una categoría.';
+  if ((datos.descripcion || '').trim().length < 5) errores.descripcion = 'Escribe una descripción de mínimo 5 letras.';
+  if (!Number.isInteger(precio) || precio <= 0) errores.precio = 'El precio debe ser un número entero mayor que 0.';
+  if (String(datos.stock).trim() === '' || !Number.isInteger(stock) || stock < 0) errores.stock = 'El stock debe ser un número entero (0 o más).';
+  return errores;
+}

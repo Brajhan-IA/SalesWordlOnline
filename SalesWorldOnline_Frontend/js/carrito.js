@@ -32,6 +32,21 @@ const Carrito = {
     } catch (e) {
       this.items = [];
     }
+    this.sanear();
+  },
+
+  /**
+   * Quita del carrito los productos que ya no existen y ajusta las cantidades
+   * al stock disponible (el administrador pudo eliminar o editar productos).
+   */
+  sanear() {
+    this.items = this.items.filter((i) => {
+      const producto = obtenerProductoPorId(i.id);
+      if (!producto || producto.stock <= 0) return false;
+      i.cantidad = Math.min(i.cantidad, producto.stock);
+      return true;
+    });
+    this.guardar();
   },
 
   /** Guarda el estado actual del carrito. */

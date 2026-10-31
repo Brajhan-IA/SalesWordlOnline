@@ -6,11 +6,10 @@
  */
 'use strict';
 
-/** Escapa texto para evitar inyección de HTML (seguridad XSS). */
+/** Escapa texto para evitar inyección de HTML (seguridad XSS), también dentro de atributos. */
 function escaparHTML(texto) {
-  const div = document.createElement('div');
-  div.textContent = texto;
-  return div.innerHTML;
+  return String(texto).replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 /**

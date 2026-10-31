@@ -1,10 +1,10 @@
 /**
  * app.js
+ * Controlador de la interfaz del cliente.
  * Historias de usuario cubiertas: HU_06 (lista de productos), HU_07 (agregar al carrito),
  * HU_08 (modificar carrito), HU_09 (confirmar compra), HU_10 (ver/cancelar carrito),
  * HU_11 (método de pago) y HU_12 (acceso desde el navegador).
- * Controlador de la interfaz: conecta el DOM con la lógica del carrito,
- * las validaciones y la factura.
+ * El módulo del administrador (HU_01 a HU_04) está en admin.js.
  */
 'use strict';
 
@@ -13,6 +13,19 @@ const $ = (id) => document.getElementById(id);
 const estado = { categoria: 'Todos', texto: '' };
 
 /* ---------- Catálogo ---------- */
+
+/**
+ * Devuelve el HTML de la foto de un producto. Si no tiene foto o no carga,
+ * se muestra el emoji del producto como respaldo (ver el listener 'error').
+ * @param {Object} p - Producto.
+ * @param {string} clase - Clase CSS de la imagen.
+ * @returns {string} Fragmento HTML.
+ */
+function htmlImagen(p, clase) {
+  if (!p.imagen) return `<span class="${clase}">${escaparHTML(p.icono)}</span>`;
+  return `<img class="${clase}" src="${escaparHTML(p.imagen)}" alt="${escaparHTML(p.nombre)}"
+    data-icono="${escaparHTML(p.icono)}" loading="lazy">`;
+}
 
 /** Dibuja los botones de categorías. */
 function pintarFiltros() {
@@ -27,10 +40,10 @@ function pintarProductos() {
   $('sinResultados').hidden = lista.length > 0;
   $('grillaProductos').innerHTML = lista.map((p) => `
     <article class="tarjeta">
-      <div class="tarjeta__icono" aria-hidden="true">${p.icono}</div>
-      <span class="tarjeta__categoria">${p.categoria}</span>
-      <h3>${p.nombre}</h3>
-      <p class="tarjeta__desc">${p.descripcion}</p>
+      <div class="tarjeta__foto">${htmlImagen(p, 'tarjeta__imagen')}</div>
+      <span class="tarjeta__categoria">${escaparHTML(p.categoria)}</span>
+      <h3>${escaparHTML(p.nombre)}</h3>
+      <p class="tarjeta__desc">${escaparHTML(p.descripcion)}</p>
       <p class="tarjeta__precio">${formatearPesos(p.precio)}</p>
       <p class="tarjeta__stock">${p.stock} disponibles</p>
       <button class="btn btn--primario" data-agregar="${p.id}" ${estaDisponible(p) ? '' : 'disabled'}>
@@ -52,9 +65,9 @@ function pintarCarrito() {
         const p = obtenerProductoPorId(i.id);
         return `
         <li class="item">
-          <span class="item__icono">${p.icono}</span>
+          <span class="item__foto">${htmlImagen(p, 'item__imagen')}</span>
           <div class="item__info">
-            <strong>${p.nombre}</strong>
+            <strong>${escaparHTML(p.nombre)}</strong>
             <small>${formatearPesos(p.precio)} c/u</small>
           </div>
           <div class="item__cantidad">
@@ -87,7 +100,7 @@ function avisar(mensaje) {
   toast.textContent = mensaje;
   toast.hidden = false;
   clearTimeout(avisar.temporizador);
-  avisar.temporizador = setTimeout(() => { toast.hidden = true; }, 2200);
+  avisar.temporizador = setTimeout(() => { toast.hidden = true; }, 2600);
 }
 
 /* ---------- Checkout ---------- */
@@ -97,7 +110,7 @@ function leerFormulario() {
   return Object.fromEntries(new FormData($('formCheckout')).entries());
 }
 
-/** Muestra u oculta los mensajes de error del formulario. */
+/** Muestra u oculta los mensajes de error del formulario de checkout. */
 function pintarErrores(errores) {
   document.querySelectorAll('[data-error]').forEach((el) => {
     el.textContent = errores[el.dataset.error] || '';
@@ -120,6 +133,20 @@ function confirmarCompra(evento) {
   $('modalCheckout').close();
   mostrarCarrito(false);
   $('modalFactura').showModal();
+}
+
+/* ---------- Portada ---------- */
+
+/** Muestra un saludo según la hora del día, seguido del eslogan de la tienda. */
+function pintarSaludo() {
+  const hora = new Date().getHours();
+  const saludo = hora < 12 ? 'Buenos días' : (hora < 19 ? 'Buenas tardes' : 'Buenas noches');
+  $('saludo').textContent = saludo + '. Tecnología, moda, hogar y más en un solo lugar.';
+}
+
+/** El registro de clientes (HU_05) pertenece a una etapa posterior. */
+function avisarModuloUsuarios() {
+  avisar('El registro de clientes estará disponible en la siguiente etapa.');
 }
 
 /* ---------- Eventos (delegación) ---------- */
@@ -156,6 +183,16 @@ function registrarEventos() {
     pintarCarrito();
   });
 
+  // Si una foto no carga, se reemplaza por el emoji del producto (respaldo)
+  document.addEventListener('error', (e) => {
+    const img = e.target;
+    if (img.tagName !== 'IMG' || !img.dataset.icono) return;
+    const respaldo = document.createElement('span');
+    respaldo.className = img.className;
+    respaldo.textContent = img.dataset.icono;
+    img.replaceWith(respaldo);
+  }, true);
+
   $('btnCarrito').addEventListener('click', () => mostrarCarrito(true));
   $('btnCerrarCarrito').addEventListener('click', () => mostrarCarrito(false));
   $('fondo').addEventListener('click', () => mostrarCarrito(false));
@@ -166,23 +203,9 @@ function registrarEventos() {
   $('btnImprimir').addEventListener('click', () => window.print());
   $('btnCerrarFactura').addEventListener('click', () => $('modalFactura').close());
 
-  // Accesos de usuario (módulo futuro)
-  ['btnIngresar', 'btnRegistrarse', 'btnCrearCuenta'].forEach((id) =>
+  // Registro de clientes (módulo futuro)
+  ['btnRegistrarse', 'btnCrearCuenta'].forEach((id) =>
     $(id).addEventListener('click', avisarModuloUsuarios));
-}
-
-/* ---------- Portada ---------- */
-
-/** Muestra un saludo según la hora del día, seguido del eslogan de la tienda. */
-function pintarSaludo() {
-  const hora = new Date().getHours();
-  const saludo = hora < 12 ? 'Buenos días' : (hora < 19 ? 'Buenas tardes' : 'Buenas noches');
-  $('saludo').textContent = saludo + '. Tecnología, moda, hogar y más en un solo lugar.';
-}
-
-/** Registro e ingreso pertenecen al módulo de usuarios (HU_01 a HU_05): se desarrolla en la siguiente etapa. */
-function avisarModuloUsuarios() {
-  avisar('El registro e ingreso estarán disponibles en el módulo de usuarios.');
 }
 
 /* ---------- Arranque ---------- */
