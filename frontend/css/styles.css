@@ -1,0 +1,166 @@
+/* ==========================================================================
+   Sales World Online - Hoja de estilos principal (componente front-end)
+   Autor: Brajhan Alejandro Jacome | Evidencia GA7-220501096-AA4-EV03
+   Estándar: variables CSS, nomenclatura BEM simplificada, mobile-first.
+   ========================================================================== */
+
+/* 0. Fuentes locales (funcionan sin internet): Orbitron para títulos, Exo 2 para texto */
+@font-face { font-family: "Orbitron"; font-weight: 700; src: url("../fonts/orbitron-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Orbitron"; font-weight: 900; src: url("../fonts/orbitron-latin-900-normal.woff2") format("woff2"); }
+@font-face { font-family: "Exo 2"; font-weight: 400; src: url("../fonts/exo-2-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Exo 2"; font-weight: 600; src: url("../fonts/exo-2-latin-600-normal.woff2") format("woff2"); }
+
+/* 1. Variables de diseño (tema espacial oscuro con neón cian) */
+:root {
+  --fondo: #030816;
+  --panel: #0c1630;
+  --borde: #16335a;
+  --neon: #19e6d3;
+  --azul: #19b5f5;
+  --oro: #ffd23f;
+  --neon-suave: rgba(25, 230, 211, 0.15);
+  --texto: #e6f1ff;
+  --texto-suave: #8fa6c7;
+  --error: #ff5c7a;
+  --ok: #3ddc97;
+  --radio: 14px;
+  --fuente: "Exo 2", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  --fuente-titulo: "Orbitron", "Exo 2", sans-serif;
+}
+
+/* 2. Reset básico */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--fuente);
+  color: var(--texto);
+  min-height: 100vh;
+  background: radial-gradient(ellipse at top, #0b1d44 0%, var(--fondo) 60%) fixed;
+}
+
+/* Estrellas animadas: canvas fijo detrás del contenido (se dibuja en app.js) */
+#estrellas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+
+a { color: var(--neon); text-decoration: none; }
+
+/* 3. Encabezado y navegación */
+.encabezado {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 14px 28px;
+  background: rgba(5, 10, 26, 0.85);
+  border-bottom: 1px solid var(--borde);
+  position: sticky; top: 0; z-index: 10;
+}
+.logo { font-weight: 800; letter-spacing: 3px; font-size: 1.3rem; color: var(--neon);
+        text-shadow: 0 0 12px var(--neon); }
+.menu { display: flex; gap: 22px; list-style: none; }
+.menu a { color: var(--texto); font-size: .95rem; padding-bottom: 4px; }
+.menu a.activo, .menu a:hover { color: var(--neon); border-bottom: 2px solid var(--neon); }
+.acciones { display: flex; gap: 10px; align-items: center; }
+.insignia { background: var(--neon-suave); color: var(--neon); border: 1px solid var(--neon);
+            border-radius: 999px; padding: 4px 12px; font-size: .85rem; }
+
+/* 4. Botones */
+.boton {
+  background: var(--neon); color: #03121a; border: 0; border-radius: 10px;
+  padding: 9px 18px; font-weight: 700; cursor: pointer; font-size: .9rem;
+  transition: transform .15s, box-shadow .15s;
+}
+.boton:hover { transform: translateY(-2px); box-shadow: 0 0 16px var(--neon); }
+.boton--borde { background: transparent; color: var(--neon); border: 1px solid var(--neon); }
+.boton--peligro { background: transparent; color: var(--error); border: 1px solid var(--error); }
+
+/* 5. Contenido principal */
+.contenedor { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+.titulo { font-size: 1.8rem; margin-bottom: 6px; }
+.subtitulo { color: var(--texto-suave); margin-bottom: 22px; }
+
+.hero { text-align: center; padding: 40px 10px 20px; }
+.hero h1 { font-size: 2.4rem; text-shadow: 0 0 22px var(--neon); }
+.hero p { color: var(--texto-suave); margin-top: 8px; }
+
+/* 6. Filtros del catálogo */
+.filtros { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+.filtros input, .filtros select, .campo input {
+  background: var(--panel); border: 1px solid var(--borde); color: var(--texto);
+  border-radius: 10px; padding: 10px 14px; font-size: .95rem; outline: none;
+}
+.filtros input { flex: 1; min-width: 200px; }
+.filtros input:focus, .filtros select:focus, .campo input:focus { border-color: var(--neon); }
+
+/* 7. Tarjetas de producto (rejilla adaptable) */
+.rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
+.tarjeta {
+  background: var(--panel); border: 1px solid var(--borde); border-radius: var(--radio);
+  padding: 18px; display: flex; flex-direction: column; gap: 8px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.tarjeta:hover { border-color: var(--neon); box-shadow: 0 0 18px var(--neon-suave); }
+.tarjeta__icono { font-size: 2.6rem; text-align: center; }
+.tarjeta__categoria { color: var(--neon); font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; }
+.tarjeta__precio { font-size: 1.2rem; font-weight: 700; }
+.tarjeta__puntos { color: var(--texto-suave); font-size: .8rem; }
+
+/* 8. Formularios (login y registro) */
+.formulario { max-width: 440px; margin: 30px auto; background: var(--panel);
+              border: 1px solid var(--borde); border-radius: var(--radio); padding: 28px; }
+.campo { margin-bottom: 16px; }
+.campo label { display: block; margin-bottom: 6px; font-size: .9rem; color: var(--texto-suave); }
+.campo input { width: 100%; }
+.campo--error input { border-color: var(--error); }
+.campo__mensaje { color: var(--error); font-size: .8rem; min-height: 1em; margin-top: 4px; }
+
+/* 9. Carrito */
+.tabla { width: 100%; border-collapse: collapse; background: var(--panel);
+         border-radius: var(--radio); overflow: hidden; }
+.tabla th, .tabla td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--borde); }
+.tabla th { color: var(--neon); font-size: .8rem; text-transform: uppercase; }
+.resumen { margin-top: 20px; display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
+.resumen__total { font-size: 1.4rem; font-weight: 800; color: var(--neon); }
+.vacio { text-align: center; color: var(--texto-suave); padding: 40px; }
+
+/* 10. Notificación flotante */
+.aviso { position: fixed; bottom: 24px; right: 24px; background: var(--ok); color: #03140c;
+         padding: 12px 20px; border-radius: 10px; font-weight: 700;
+         opacity: 0; transform: translateY(20px); transition: all .3s; pointer-events: none; }
+.aviso--visible { opacity: 1; transform: translateY(0); }
+
+.pie { text-align: center; color: var(--texto-suave); font-size: .8rem; padding: 24px; border-top: 1px solid var(--borde); }
+
+/* 11. Diseño adaptable (responsive) */
+@media (max-width: 700px) {
+  .encabezado { padding: 12px 14px; }
+  .menu { gap: 12px; font-size: .85rem; flex-wrap: wrap; }
+  .hero h1 { font-size: 1.7rem; }
+}
+
+/* 12. Rediseño: identidad visual real de Sales World Online */
+.logo, .titulo, .hero h1, .seccion__titulo { font-family: var(--fuente-titulo); }
+.logo { font-weight: 900; font-size: 1.6rem; letter-spacing: 4px; }
+.menu { text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+.menu a { font-size: .85rem; border-bottom: 2px solid transparent; }
+.insignia { border-color: rgba(255, 210, 63, .6); color: var(--oro); background: rgba(255, 210, 63, .1); font-weight: 600; }
+.usuario { color: var(--texto); border: 1px solid var(--borde); border-radius: 10px; padding: 8px 14px;
+           font-weight: 600; background: rgba(12, 22, 48, .7); }
+.boton--carrito { background: linear-gradient(135deg, var(--azul), var(--neon)); display: inline-flex; gap: 8px; align-items: center; }
+.contador { background: var(--oro); color: #1a1300; border-radius: 999px; min-width: 24px; padding: 1px 7px; text-align: center; font-weight: 800; }
+.boton { background: linear-gradient(135deg, var(--azul), var(--neon)); letter-spacing: .5px; }
+.boton--borde { background: transparent; }
+.boton--peligro { background: transparent; }
+
+.hero { padding: 70px 10px 50px; }
+.hero__etiqueta { display: inline-block; border: 1px solid var(--azul); border-radius: 999px; padding: 9px 22px;
+                  color: var(--azul); font-size: .78rem; letter-spacing: 3px; font-weight: 700; margin-bottom: 26px; }
+.hero h1 { font-weight: 900; font-size: clamp(2rem, 7vw, 4.6rem); line-height: 1.1; letter-spacing: 3px;
+           background: linear-gradient(90deg, #8be9ff, var(--azul) 45%, var(--neon)); -webkit-background-clip: text;
+           background-clip: text; color: transparent; text-shadow: none; filter: drop-shadow(0 0 18px rgba(25, 200, 240, .35)); }
+.hero p { font-size: 1.15rem; margin: 18px 0 32px; }
+.hero__botones { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.boton--grande { padding: 16px 34px; font-size: 1rem; border-radius: 999px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
+.boton--grande.boton--borde { border: 1px solid var(--borde); color: var(--texto); }
+
+.seccion { padding-top: 46px; }
+.seccion__titulo { font-size: 1.5rem; margin-bottom: 8px; }
+.pasos { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+.paso { background: rgba(12, 22, 48, .8); border: 1px solid var(--borde); border-radius: var(--radio); padding: 20px; }
+.paso strong { color: var(--neon); }

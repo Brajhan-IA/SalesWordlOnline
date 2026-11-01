@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo | Sales World Online</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-pagina="catalogo">
+  <canvas id="estrellas"></canvas>
+  <header class="encabezado" id="encabezado"></header>
+  <section class="hero">
+    <span class="hero__etiqueta">🚀 EL UNIVERSO DE LAS COMPRAS ONLINE</span>
+    <h1>SALES WORLD<br>ONLINE</h1>
+    <p>Tecnología, moda, autos y más — con puntos, crédito preferencial y un marketplace para clientes.</p>
+    <div class="hero__botones">
+      <a href="#catalogo" class="boton boton--grande">🛍️ Ver catálogo</a>
+      <a href="#marketplace" class="boton boton--grande boton--borde">🏪 Marketplace</a>
+    </div>
+  </section>
+  <main class="contenedor">
+    <section id="catalogo">
+      <h2 class="seccion__titulo">Catálogo</h2>
+      <div class="filtros">
+        <input type="search" id="buscador" placeholder="Buscar productos...">
+        <select id="categoria"><option value="">Todas las categorías</option></select>
+      </div>
+      <section class="rejilla" id="rejilla"></section>
+    </section>
+    <section class="seccion" id="marketplace">
+      <h2 class="seccion__titulo">Marketplace</h2>
+      <p class="subtitulo">Los clientes también pueden publicar y vender sus productos.</p>
+      <div class="pasos">
+        <div class="paso"><strong>1.</strong> Publica tu producto con foto y precio.</div>
+        <div class="paso"><strong>2.</strong> Otros clientes lo encuentran en el catálogo.</div>
+        <div class="paso"><strong>3.</strong> Vende y acumula puntos en tu cuenta.</div>
+      </div>
+    </section>
+    <section class="seccion" id="credito">
+      <h2 class="seccion__titulo">Crédito preferencial</h2>
+      <p class="subtitulo">Financia tus compras en cuotas según tu nivel de fidelización.</p>
+    </section>
+  </main>
+  <footer class="pie">Sales World Online © 2025 · Componente front-end · Brajhan Alejandro Jacome · SENA</footer>
+  <div class="aviso" id="aviso"></div>
+  <script src="js/datos.js"></script>
+  <script src="js/validaciones.js"></script>
+  <script src="js/carrito.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
